@@ -42,14 +42,14 @@ if __name__ == '__main__':
     # for i in range(2):
     #     _, _ = test_ctpn(sess, net, im)
 
-    im_names = glob.glob(os.path.join(cfg.DATA_DIR, 'results_fin', '*.png')) + \
-               glob.glob(os.path.join(cfg.DATA_DIR, 'results_fin', '*.jpg'))
+    # im_names = glob.glob(os.path.join(cfg.DATA_DIR, 'results_fin', '*.png')) + \
+    #            glob.glob(os.path.join(cfg.DATA_DIR, 'results_fin', '*.jpg'))
 
     im_names = filter(os.path.isfile, glob.glob(os.path.join(cfg.DATA_DIR, 'results_fin', '*.jpg')))
-    # im_names = filter(os.path.isfile, list(im_names))
+    im_names = filter(os.path.isfile, list(im_names))
     im_names = list(im_names)
-    im_names.sort(key=lambda x: os.path.getmtime(x))
-
+    im_names.sort(key=lambda x: int(x.split('_')[-1].split(".")[0]))#os.path.getmtime(x))
+    # print(im_names)
     words = load_dict("./print_words.txt")
     new_words = []
     first = True
@@ -61,8 +61,8 @@ if __name__ == '__main__':
         if index == len(words):
             index = gl_index
             continue
-        if i % 31 == 0:
-            print("i%31==0")
+        # if i % 31 == 0:
+        #     print("i%31==0")
         if i % 31 == 0 and first:
             first = False
         elif i % 31 == 0 and not first:
@@ -81,28 +81,39 @@ if __name__ == '__main__':
 
     image_index = 0
     text_index = 0
-    back_arr=[333, 364]
-    for_text=[340, 683]
-    with open('data/results_fin/' + 'results.txt', 'w', encoding="utf-8") as f:
-        for i in range(len(new_words)):
-            if image_index == len(new_words):
-                break
-            # print(i)
-            if i in back_arr:
-                image_index += 1
-                print("cont",new_words[text_index])
-                # continue
-            if "перерезываться" ==     new_words[text_index]:
-                print("text_index", text_index)
-            if i in for_text:
-                print("skip text", new_words[text_index])
-                text_index += 1
+    # back_arr=[333, 364, 1602]
+    # for_text=[340, 683, 1601, 1602]
+    lines = []
+    lines_words = []
+    for i in range(len(new_words)):
+        if image_index == len(new_words) or text_index == len(new_words):
+            break
+        # print(i)
+        # if i in back_arr:
+        #     image_index += 1
+        #     print("cont",new_words[text_index])
+        #     # continue
+        # if "малоземельцы" == new_words[text_index]:
+        #     print("text_index", text_index)
+        #
+        # if i in for_text:
+        #     print("skip text", new_words[text_index])
+        #     text_index += 1
 
-                # continue
-            base_name = im_names[image_index].split('/')[-1]
-            # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-            # print(('Demo for {:s}'.format(im_name)))
-            f.write(base_name + "\t" + new_words[text_index]+"\n")
+            # continue
+        base_name = im_names[image_index].split('/')[-1]
+        # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+        # print(('Demo for {:s}'.format(im_name)))
+        lines.append(base_name) #+ "\t" +  + "\n")
+        lines_words.append(new_words[text_index])
+        print(i, index, base_name, new_words[text_index])
 
-            image_index += 1
-            text_index += 1
+        image_index += 1
+        text_index += 1
+
+    with open('data/results_fin/' + 'results2.txt', 'w', encoding="utf-8") as f:
+        # print(lines)
+        f.write("\n".join(lines))
+    with open('data/results_fin/' + 'results_words2.txt', 'w', encoding="utf-8") as f:
+        # print(lines)
+        f.write("\n".join(lines_words))
